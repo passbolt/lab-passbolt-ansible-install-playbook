@@ -1,0 +1,14 @@
+---
+- name: Configure PHP-FPM
+  copy:
+    src: templates/www.conf.j2
+    dest: /etc/php/{{ php_version }}/fpm/pool.d/www.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Restart PHP-FPM
+  service:
+    name: php{{ php_version }}-fpm
+    state: restarted
+    enabled: true

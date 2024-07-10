@@ -1,0 +1,32 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Passbolt CE
+  when: passbolt_edition == "ce"
+  apt:
+    name: passbolt-ce-server
+    state: present
+
+- name: Install Passbolt Pro
+  when: passbolt_edition == "pro"
+  apt:
+    name: passbolt-pro-server
+    state: present
+
+- name: Create database
+  mysql_db:
+    name: "{{ db_name }}"
+    state: present
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"
+
+- name: Create database user
+  mysql_user:
+    name: "{{ db_username }}"
+    password: "{{ db_password }}"
+    priv: "{{ db_name }}.*:ALL"
+    state: present
+    login_user: "{{ db_root_user }}"
+    login_password: "{{ db_root_password }}"

@@ -1,0 +1,37 @@
+---
+- name: Generate self-signed SSL certificate
+  command: >
+    openssl req -x509
+    -newkey rsa:4096
+    -days 120
+    -subj "{{ ssl_subj }}"
+    -nodes
+    -addext "subjectAltName = {{ ssl_subjectAltName }}"
+    -keyout /tmp/key.pem
+    -out /tmp/cert.pem
+  args:
+    creates: /tmp/key.pem
+
+- name: Move and rename SSL certificate to /etc/ssl/certs
+  command: mv /tmp/cert.pem /etc/ssl/certs/passbolt.crt
+  args:
+    creates: /etc/ssl/certs/passbolt.crt
+
+- name: Move and rename SSL key to /etc/ssl/private
+  command: mv /tmp/key.pem /etc/ssl/private/passbolt.key
+  args:
+    creates: /etc/ssl/private/passbolt.key
+
+- name: Set permissions on SSL private key
+  file:
+    path: /etc/ssl/private/passbolt.key
+    owner: root
+    group: root
+    mode: '0600'
+
+- name: Set permissions on SSL certificate
+  file:
+    path: /etc/ssl/certs/passbolt.crt
+    owner: root
+    group: root
+    mode: '0644'

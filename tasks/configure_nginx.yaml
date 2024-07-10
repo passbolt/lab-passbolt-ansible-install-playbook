@@ -1,0 +1,46 @@
+---
+- name: Configure Nginx
+  copy:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Configure Passbolt Nginx site
+  copy:
+    src: templates/passbolt.conf.j2
+    dest: /etc/nginx/sites-available/passbolt
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Configure Passbolt SSL settings
+  copy:
+    src: templates/nginx-ssl.conf.j2
+    dest: /etc/passbolt/nginx-ssl.conf
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Enable Passbolt Nginx site
+  file:
+    src: /etc/nginx/sites-available/passbolt
+    dest: /etc/nginx/sites-enabled/passbolt
+    state: link
+
+- name: Disable default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+
+- name: Test Nginx configuration
+  command: nginx -t
+  notify:
+    - Reload Nginx
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
+    enabled: true

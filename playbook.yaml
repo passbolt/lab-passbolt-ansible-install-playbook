@@ -1,0 +1,19 @@
+---
+- hosts: passbolt_server
+  become: yes
+
+  vars_files:
+    - group_vars/all.yaml
+
+  tasks:
+    - import_tasks: tasks/prerequisites.yaml
+    - import_tasks: tasks/install_passbolt.yaml
+    - import_tasks: tasks/configure_nginx.yaml
+    - import_tasks: tasks/configure_php.yaml
+    - import_tasks: tasks/generate_ssl_cert.yaml
+
+  handlers:
+    - name: Reload Nginx
+      service:
+        name: nginx
+        state: reloaded

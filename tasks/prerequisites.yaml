@@ -1,0 +1,79 @@
+---
+- name: Ensure system is updated
+  apt:
+    update_cache: yes
+    upgrade: dist
+
+- name: Download passbolt-repo-setup script for PRO edition
+  when: passbolt_edition == "pro"
+  get_url:
+    url: "{{ passbolt_repositories.pro }}"
+    dest: /tmp/passbolt-repo-setup.pro.sh
+    mode: '0755'
+
+- name: Run passbolt-repo-setup script for PRO edition
+  when: passbolt_edition == "pro"
+  command: /tmp/passbolt-repo-setup.pro.sh
+
+- name: Download passbolt-repo-setup script for CE edition
+  when: passbolt_edition == "ce"
+  get_url:
+    url: "{{ passbolt_repositories.ce }}"
+    dest: /tmp/passbolt-repo-setup.ce.sh
+    mode: '0755'
+
+- name: Run passbolt-repo-setup script for CE edition
+  when: passbolt_edition == "ce"
+  command: /tmp/passbolt-repo-setup.ce.sh
+
+- name: Install Python MySQL library
+  apt:
+    name: python3-pymysql
+    state: present
+
+- name: Ensure MySQL is installed
+  apt:
+    name: mariadb-server
+    state: present
+
+- name: Ensure MySQL is running
+  service:
+    name: mysql
+    state: started
+    enabled: true
+
+- name: Set root password and disable unix_socket authentication
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ db_root_password }}"
+    login_unix_socket: /var/run/mysqld/mysqld.sock
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+- name: Remove anonymous MySQL users
+  mysql_user:
+    name: ""
+    host_all: yes
+    state: absent
+    login_user: root
+    login_password: "{{ db_root_password }}"
+
+- name: Remove MySQL test database
+  mysql_db:
+    name: "test"
+    state: absent
+    login_user: root
+    login_password: "{{ db_root_password }}"
+
+- name: Ensure remote root login is disabled
+  mysql_user:
+    name: "root"
+    host: "{{ item }}"
+    state: absent
+    login_user: root
+    login_password: "{{ db_root_password }}"
+  with_items:
+    - "%"
+    - "::1"
+    - "127.0.0.1"
