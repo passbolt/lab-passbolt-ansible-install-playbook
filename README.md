@@ -7,7 +7,7 @@
 ## Pre-requisites
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 - [Git](https://git-scm.com/downloads)
-- A Debian/Ubuntu server 
+- A vanilla Debian/Ubuntu server 
   - Access to the target server with necessary permission
 
 ## Getting Started
