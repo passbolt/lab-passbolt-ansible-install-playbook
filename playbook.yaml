@@ -8,9 +8,9 @@
   tasks:
     - import_tasks: tasks/prerequisites.yaml
     - import_tasks: tasks/install_passbolt.yaml
+    - import_tasks: tasks/generate_ssl_cert.yaml
     - import_tasks: tasks/configure_nginx.yaml
     - import_tasks: tasks/configure_php.yaml
-    - import_tasks: tasks/generate_ssl_cert.yaml
 
   handlers:
     - name: Reload Nginx
