@@ -1,6 +1,6 @@
 ---
 - name: Configure PHP-FPM
-  copy:
+  template:
     src: templates/www.conf.j2
     dest: /etc/php/{{ php_version }}/fpm/pool.d/www.conf
     owner: root
