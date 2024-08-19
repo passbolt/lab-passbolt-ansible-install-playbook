@@ -1,17 +1,38 @@
 ---
-- name: Update apt cache
+- name: Gather facts about the host
+  ansible.builtin.setup:
+
+- name: Update package cache APT
   apt:
     update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Install Passbolt CE
-  when: passbolt_edition == "ce"
+- name: Update package cache RPM
+  dnf:
+    update_cache: yes
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Install Passbolt CE (Debian/Ubuntu)
+  when: ansible_facts['os_family'] == "Debian" and passbolt_edition == "ce"
   apt:
     name: passbolt-ce-server
     state: present
 
-- name: Install Passbolt Pro
-  when: passbolt_edition == "pro"
+- name: Install Passbolt PRO (Debian/Ubuntu)
+  when: ansible_facts['os_family'] == "Debian" and passbolt_edition == "pro"
   apt:
+    name: passbolt-pro-server
+    state: present
+
+- name: Install Passbolt CE for RPM
+  when: ansible_facts['os_family'] == "RedHat" and passbolt_edition == "ce"
+  dnf:
+    name: passbolt-ce-server
+    state: present
+
+- name: Install Passbolt PRO for RPM
+  when: ansible_facts['os_family'] == "RedHat" and passbolt_edition == "pro"
+  dnf:
     name: passbolt-pro-server
     state: present
 

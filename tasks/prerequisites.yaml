@@ -1,8 +1,18 @@
 ---
-- name: Ensure system is updated
+- name: Gather facts about the host
+  ansible.builtin.setup:
+
+- name: Ensure system is updated (Debian/Ubuntu)
   apt:
     update_cache: yes
     upgrade: dist
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Ensure system is updated for RPM distribution
+  dnf:
+    update_cache: yes
+    state: latest
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Download passbolt-repo-setup script for PRO edition
   when: passbolt_edition == "pro"
@@ -26,30 +36,64 @@
   when: passbolt_edition == "ce"
   command: /tmp/passbolt-repo-setup.ce.sh
 
-- name: Install Python MySQL library
+- name: Install Python MySQL library (Debian/Ubuntu)
   apt:
     name: python3-pymysql
     state: present
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Ensure MySQL is installed
+- name: Install Python MySQL library for RPM distribution
+  dnf:
+    name: python3-PyMySQL
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Ensure MySQL is installed (Debian/Ubuntu)
   apt:
     name: mariadb-server
     state: present
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Ensure MySQL is running
+- name: Ensure MySQL is installed for RPM distribution
+  dnf:
+    name: mariadb-server
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Ensure MySQL is running (Debian/Ubuntu)
   service:
     name: mysql
     state: started
     enabled: true
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Set root password and disable unix_socket authentication
+- name: Ensure MySQL is running for RPM distribution
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Set root password and disable unix_socket authentication (RPM)
   mysql_user:
     name: root
     host: localhost
     password: "{{ db_root_password }}"
-    login_unix_socket: /var/run/mysqld/mysqld.sock
+    login_unix_socket: /var/lib/mysql/mysql.sock
     priv: "*.*:ALL,GRANT"
     state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Set root password and disable unix_socket authentication (Debian/Ubuntu)
+  mysql_user:
+    name: root
+    host: localhost
+    password: "{{ db_root_password }}"
+    login_unix_socket: /run/mysqld/mysqld.sock
+    priv: "*.*:ALL,GRANT"
+    state: present
+  when: ansible_facts['os_family'] == "Debian"
+
 
 - name: Remove anonymous MySQL users
   mysql_user:

@@ -1,48 +1,82 @@
 ---
-- name: Configure Nginx
+- name: Gather facts about the host
+  ansible.builtin.setup:
+
+- name: Configure Nginx (Debian/Ubuntu)
   template:
-    src: templates/nginx.conf.j2
+    src: templates/deb/nginx/nginx.conf.j2
     dest: /etc/nginx/nginx.conf
     owner: root
     group: root
     mode: '0644'
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Configure Passbolt Nginx site
+- name: Configure Nginx (RedHat/AlmaLinux)
   template:
-    src: templates/passbolt.conf.j2
+    src: templates/rpm/nginx/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Configure Passbolt Nginx site (Debian/Ubuntu)
+  template:
+    src: templates/deb/nginx/passbolt.conf.j2
     dest: /etc/nginx/sites-available/passbolt.conf
     owner: root
     group: root
     mode: '0644'
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Configure Passbolt SSL settings
+- name: Configure Passbolt Nginx site (RedHat/AlmaLinux)
   template:
-    src: templates/nginx-ssl.conf.j2
+    src: templates/rpm/nginx/passbolt.conf.j2
+    dest: /etc/nginx/conf.d/passbolt.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Configure Passbolt SSL settings (Debian/Ubuntu)
+  template:
+    src: templates/deb/nginx/nginx-ssl.conf.j2
     dest: /etc/passbolt/nginx-ssl.conf
     owner: root
     group: root
     mode: '0644'
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Check if Passbolt Nginx site exists
-  stat:
-    path: /etc/nginx/sites-available/passbolt.conf
-  register: passbolt_site
+- name: Configure Passbolt SSL settings (RedHat/AlmaLinux)
+  template:
+    src: templates/rpm/nginx/nginx-ssl.conf.j2
+    dest: /etc/nginx/conf.d/passbolt_ssl.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['os_family'] == "RedHat"
 
-- name: Debug Passbolt Nginx site existence
-  debug:
-    var: passbolt_site
+- name: Configure Passbolt SSL settings (RedHat/AlmaLinux)
+  template:
+    src: templates/rpm/nginx/php-fpm.conf.j2
+    dest: /etc/nginx/conf.d/php-fpm.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['os_family'] == "RedHat"
 
-- name: Enable Passbolt Nginx site
+- name: Enable Passbolt Nginx site (Debian/Ubuntu)
   file:
     src: /etc/nginx/sites-available/passbolt.conf
     dest: /etc/nginx/sites-enabled/passbolt.conf
     state: link
-  when: passbolt_site.stat.exists
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Disable default Nginx site
+- name: Disable default Nginx site (Debian/Ubuntu)
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
+  when: ansible_facts['os_family'] == "Debian"
 
 - name: Test Nginx configuration
   command: nginx -t

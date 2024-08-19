@@ -12,22 +12,55 @@
   args:
     creates: /tmp/key.pem
 
+- name: Ensure /etc/ssl/certs directory exists
+  file:
+    path: /etc/ssl/certs
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Ensure /etc/ssl/private directory exists (Debian/Ubuntu)
+  file:
+    path: /etc/ssl/private
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  when: ansible_facts['os_family'] == "Debian"
+
 - name: Move and rename SSL certificate to /etc/ssl/certs
   command: mv /tmp/cert.pem /etc/ssl/certs/passbolt.crt
   args:
     creates: /etc/ssl/certs/passbolt.crt
 
-- name: Move and rename SSL key to /etc/ssl/private
+- name: Move and rename SSL key to /etc/ssl/private (Debian/Ubuntu)
   command: mv /tmp/key.pem /etc/ssl/private/passbolt.key
   args:
     creates: /etc/ssl/private/passbolt.key
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Set permissions on SSL private key
+- name: Move and rename SSL key to /etc/ssl/certs (RedHat/AlmaLinux)
+  command: mv /tmp/key.pem /etc/ssl/certs/passbolt.key
+  args:
+    creates: /etc/ssl/certs/passbolt.key
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Set permissions on SSL private key (Debian/Ubuntu)
   file:
     path: /etc/ssl/private/passbolt.key
     owner: root
     group: root
     mode: '0600'
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Set permissions on SSL private key (RedHat/AlmaLinux)
+  file:
+    path: /etc/ssl/certs/passbolt.key
+    owner: root
+    group: root
+    mode: '0600'
+  when: ansible_facts['os_family'] == "RedHat"
 
 - name: Set permissions on SSL certificate
   file:
