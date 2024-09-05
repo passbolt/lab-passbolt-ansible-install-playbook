@@ -77,9 +77,26 @@ You should navigate to the `passbolt_url` to finish the installation process e.g
 
 ### Run the healthCheck from the server
 After the installation, you should monitor that there is no issues with the installation process
+
+`Debian/Ubuntu distribution`
 ```bash
 sudo su -s /bin/bash -c "/usr/share/php/passbolt/bin/cake passbolt healthcheck" www-data
 ```
+
+`RPM distribution`
+```bash
+sudo su -s /bin/bash -c "/usr/share/php/passbolt/bin/cake passbolt healthcheck" nginx
+```
+
+## Tests
+
+This ansible installation script has been tested on:
+- Debian 12
+- Debian 11
+- AlmaLinux 9
+- RockyLinux 9
+
+Feel free to help us throughout other distributions and let us know whenever you encounter an issues. 
 
 ## Copyright & License
 

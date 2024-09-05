@@ -1,14 +1,32 @@
 ---
-- name: Configure PHP-FPM
+- name: Configure PHP-FPM (Debian/Ubuntu)
   template:
-    src: templates/www.conf.j2
+    src: templates/deb/php-fpm/www.conf.j2
     dest: /etc/php/{{ php_version }}/fpm/pool.d/www.conf
     owner: root
     group: root
     mode: '0644'
+  when: ansible_facts['os_family'] == "Debian"
 
-- name: Restart PHP-FPM
+- name: Configure PHP-FPM (RPM)
+  template:
+    src: templates/rpm/php-fpm/www.conf.j2
+    dest: /etc/php-fpm.d/www.conf
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Restart PHP-FPM (Debian/Ubuntu)
   service:
     name: php{{ php_version }}-fpm
     state: restarted
     enabled: true
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Restart PHP-FPM (RPM)
+  service:
+    name: php-fpm
+    state: restarted
+    enabled: true
+  when: ansible_facts['os_family'] == "RedHat"
