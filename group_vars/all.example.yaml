@@ -7,6 +7,7 @@ db_root_user: "YOUR_DATABASE_ROOT_USER"
 db_root_password: "YOUR_DATABASE_ROOT_PASSWORD"
 passbolt_url: "YOUR_PASSBOLT_FULL_BASE_URL"
 
+webserver_user: "YOUR_WEBSERVER_USER"
 php_version: "YOUR_PHP_VERSION" # Debian12 = 8.2 / Ubuntu 24.04 = 8.3 / Debian 11 = 7.4 / AlmaLinux 9 = 8.1
 passbolt_edition: "PASSBOLT_EDITION"  # Options: ce || pro
 passbolt_repositories:
