@@ -8,7 +8,8 @@ db_root_user: "YOUR_DATABASE_ROOT_USER"
 db_root_password: "YOUR_DATABASE_ROOT_PASSWORD"
 
 # Passbolt configuration
-passbolt_url: "YOUR_PASSBOLT_FULL_BASE_URL"
+# Url should be the domain e.g. passbolt.local and not https://passbolt.local
+passbolt_url: "YOUR_PASSBOLT_FULL_DOMAIN_NAME"
 passbolt_edition: "PASSBOLT_EDITION"  # Options: ce || pro
 # If you are running the PRO edition, please uncomment subscription_key_content and use the provided base64 encoded subscription key
 #subscription_key_content: "BASE64_ENCODED_SUBSCRIPTION_KEY"
@@ -23,9 +24,9 @@ webserver_user: "YOUR_WEBSERVER_USER"
 # PHP
 php_version: "YOUR_PHP_VERSION" # Debian12 = 8.2 / Ubuntu 24.04 = 8.3 / Debian 11 = 7.4 / AlmaLinux 9 = 8.1
 
-# SSL
-ssl_subj: "/C=YOUR_COUNTRY/ST=YOUR_STATE/L=YOUR_CITY/O=YOUR_ORGANIZATION/OU=YOUR_ORG_UNIT/CN=YOUR_COMMON_NAME/"
-ssl_subjectAltName: "DNS:YOUR_DOMAIN"
+# SSL (Do not replace the environment variable passbolt_url)
+ssl_subj: "/C=YOUR_COUNTRY/ST=YOUR_STATE/L=YOUR_CITY/O=YOUR_ORGANIZATION/OU=YOUR_ORG_UNIT/CN={{ passbolt_url }}/"
+ssl_subjectAltName: "DNS:{{ passbolt_url }}"
 
 # GPG
 server_gpg_name_real: "GPG_SERVER_NAME"
