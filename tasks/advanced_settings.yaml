@@ -1,0 +1,50 @@
+---
+
+- name: Check if SELinux is enabled
+  command: getenforce
+  register: selinux_status
+  changed_when: false
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Set SELinux booleans if enabled
+  command: "{{ item }}"
+  loop:
+    - setsebool -P httpd_use_gpg=on
+    - setsebool -P gpg_web_anon_write=on
+    - semanage permissive -a gpg_web_t
+    - setsebool -P httpd_can_network_connect 1
+  when:
+    - ansible_facts['os_family'] == "RedHat"
+    - selinux_status.stdout == "Enforcing"
+
+- name: Install chrony on Debian/Ubuntu
+  apt:
+    name: chrony
+    state: present
+    update_cache: yes
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Ensure chrony is started on Debian/Ubuntu
+  systemd:
+    name: chrony
+    state: started
+    enabled: true
+  when: ansible_facts['os_family'] == "Debian"
+
+- name: Install chrony on RedHat/AlmaLinux
+  dnf:
+    name: chrony
+    state: present
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Ensure chrony is started on RedHat/AlmaLinux
+  systemd:
+    name: chronyd
+    state: started
+    enabled: true
+  when: ansible_facts['os_family'] == "RedHat"
+
+- name: Ensure NTP synchronization is working
+  command: timedatectl status
+  register: ntp_status
+  changed_when: false
