@@ -1,0 +1,9 @@
+- name: Passbolt Registration URL
+  debug:
+    msg: "Passbolt installation successful! Registration URL: {{ registration_url }}"
+  when: registration_url is defined
+
+- name: Configure email server
+  debug:
+    msg: "Please, do not forget to configure the SMTP settings after the account configuration in Administration > Email server on the GUI"
+  when: registration_url is defined

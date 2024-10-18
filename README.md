@@ -7,8 +7,8 @@
 ## Pre-requisites
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
 - [Git](https://git-scm.com/downloads)
-- A vanilla Debian/Ubuntu server 
-  - Access to the target server with necessary permission
+- A vanilla server
+  - An access to the target server with necessary permission 
 
 ## Getting Started
 
@@ -19,22 +19,26 @@ git clone git@github.com:passbolt/lab-passbolt-ansible-install-playbook.git
 
 ### Update the environment variables
 
-| Environment variable name | Description                                                    | Example                                                                                     |
-|---------------------------|----------------------------------------------------------------|---------------------------------------------------------------------------------------------|
-| db_host                   | The database host                                              | 127.0.0.1                                                                                   |
-| db_name                   | The passbolt database name                                     | passboltdb                                                                                  |
-| db_username               | The passbolt user username                                     | passboltadmin                                                                               |
-| db_password               | The passbolt user password                                     | P4ssb0lt!                                                                                   |
-| db_root_user              | The database root username                                     | root                                                                                        |
-| db_root_password          | The database root password                                     | \\(t0-0r)/                                                                                  |
-| passbolt_url              | The passbolt fullBaseUrl                                       | passbolt.local                                                                              |
-| php_version               | The default PHP version (Debian 12 = 8.2 / Ubuntu 24.04 = 8.3) | 8.2                                                                                         |
-| passbolt_edition          | The passbolt edition (ce / pro)                                | ce                                                                                          |
-| ssl_subj                  | The self-signed certificate subject information                | /C=LU/ST=Luxembourg/L=Esch-Sur-Alzette/O=Passbolt SA/OU=Passbolt IT Team/CN=passbolt.local/ |
-| ssl_subjectAltName        | The self-signed certificate subjectAltName (DNS)               | DNS:passbolt.local                                                                          |
+| Environment variable name      | Description                                          | Example                                                                                     |
+|--------------------------------|------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| db_host                        | The database host                                    | 127.0.0.1                                                                                   |
+| db_name                        | The passbolt database name                           | passboltdb                                                                                  |
+| db_username                    | The passbolt user username                           | passboltadmin                                                                               |
+| db_password                    | The passbolt user password                           | P4ssb0lt!                                                                                   |
+| db_root_user                   | The database root username                           | root                                                                                        |
+| db_root_password               | The database root password                           | \\(t0-0r)/                                                                                  |
+| passbolt_url                   | The passbolt domain name                             | passbolt.local                                                                              |
+| php_version                    | The default PHP version                              | 8.2                                                                                         |
+| passbolt_edition               | The passbolt edition (ce / pro)                      | ce                                                                                          |
+| ssl_subj                       | The self-signed certificate subject information      | /C=LU/ST=Luxembourg/L=Esch-Sur-Alzette/O=Passbolt SA/OU=Passbolt IT Team/CN=passbolt.local/ |
+| ssl_subjectAltName             | The self-signed certificate subjectAltName (DNS)     | DNS:passbolt.local                                                                          |
+| [PRO] subscription_key_content | The content of the subscription key (base64 encoded) | SUBSCRIPTION KEY (PRO)                                                                      |
+| server_gpg_name_real           | The name associated to the server key                | server@passbolt.com                                                                         |
+| server_gpg_name_email          | The email associated to the server key               | Passbolt Server                                                                             |
+| passbolt_admin_email           | The passbolt first administrator email (username)    | anakin@passbolt.com                                                                         |
+| passblt_admin_first_name       | The passbolt first administrator first name          | Anakin                                                                                      |
+| passbolt_admin_last_name       | The passbolt first administrator last name           | Skywalker                                                                                   |
 
-
-**WARNING:** If you plan to use the windows application, `ssl_subjectAltName` should strictly match the `passbolt_url` due to a domain verification
 
 ### Create an inventory file
 
@@ -91,12 +95,19 @@ sudo su -s /bin/bash -c "/usr/share/php/passbolt/bin/cake passbolt healthcheck" 
 ## Tests
 
 This ansible installation script has been tested on:
-- Debian 12
-- Debian 11
-- AlmaLinux 9
-- RockyLinux 9
+- Debian 12 (PRO/CE)
+- Debian 11 (PRO/CE)
+- Ubuntu 20.04 (CE/PRO)
+- Ubuntu 22.04 (CE/PRO)
+- Ubuntu 24.04 (CE/PRO)
+- AlmaLinux 8 (PRO/CE)
+- AlmaLinux 9 (PRO/CE)
+- OracleLinux 9 (PRO/CE)
+- OracleLinux 9 (PRO/CE)
+- RockyLinux 8 (PRO/CE)
+- RockyLinux 9 (PRO/CE)
 
-Feel free to help us throughout other distributions and let us know whenever you encounter an issues. 
+Feel free to help us throughout other distributions and let us know whenever you encounter an issues or if it works fine.
 
 ## Copyright & License
 

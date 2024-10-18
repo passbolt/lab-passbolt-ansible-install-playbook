@@ -1,5 +1,5 @@
 ---
-#Database
+# Database
 db_host: "YOUR_DATABASE_HOST"
 db_name: "YOUR_DATABASE_NAME"
 db_username: "YOUR_DATABASE_USER_USERNAME"

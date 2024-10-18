@@ -13,7 +13,7 @@
     - import_tasks: tasks/configure_nginx.yaml
     - import_tasks: tasks/configure_php.yaml
     - import_tasks: tasks/advanced_settings.yaml
-    - import_tasks: tasks/print_registration_url.yaml
+    - import_tasks: tasks/print_messages.yaml
 
   handlers:
     - name: Reload Nginx

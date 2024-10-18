@@ -1,4 +1,0 @@
-- name: Print Passbolt registration URL
-  debug:
-    msg: "Passbolt installation successful! Registration URL: {{ registration_url }}"
-  when: registration_url is defined
