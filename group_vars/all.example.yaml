@@ -1,19 +1,34 @@
 ---
+#Database
 db_host: "YOUR_DATABASE_HOST"
 db_name: "YOUR_DATABASE_NAME"
 db_username: "YOUR_DATABASE_USER_USERNAME"
 db_password: "YOUR_DATABASE_USER_PASSWORD"
 db_root_user: "YOUR_DATABASE_ROOT_USER"
 db_root_password: "YOUR_DATABASE_ROOT_PASSWORD"
-passbolt_url: "YOUR_PASSBOLT_FULL_BASE_URL"
 
-webserver_user: "YOUR_WEBSERVER_USER"
-php_version: "YOUR_PHP_VERSION" # Debian12 = 8.2 / Ubuntu 24.04 = 8.3 / Debian 11 = 7.4 / AlmaLinux 9 = 8.1
+# Passbolt configuration
+passbolt_url: "YOUR_PASSBOLT_FULL_BASE_URL"
 passbolt_edition: "PASSBOLT_EDITION"  # Options: ce || pro
 passbolt_repositories:
   ce: "https://download.passbolt.com/ce/installer/passbolt-repo-setup.ce.sh"
   pro: "https://download.passbolt.com/pro/installer/passbolt-repo-setup.pro.sh"
+# If you are running the PRO edition, please uncomment and use the provided base64 encoded subscription key
+#subscription_key_content: "BASE64_ENCODED_SUBSCRIPTION_KEY"
 
+# Web server
+webserver_user: "YOUR_WEBSERVER_USER"
+
+# PHP
+php_version: "YOUR_PHP_VERSION" # Debian12 = 8.2 / Ubuntu 24.04 = 8.3 / Debian 11 = 7.4 / AlmaLinux 9 = 8.1
+
+# SSL
 ssl_subj: "/C=YOUR_COUNTRY/ST=YOUR_STATE/L=YOUR_CITY/O=YOUR_ORGANIZATION/OU=YOUR_ORG_UNIT/CN=YOUR_COMMON_NAME/"
 ssl_subjectAltName: "DNS:YOUR_DOMAIN"
 
+# GPG
+server_gpg_name_real: "GPG_SERVER_NAME"
+server_gpg_name_email: "GPG_SERVER_EMAIL"
+passbolt_admin_email: "FIRST_ADMIN_USERNAME"
+passbolt_admin_first_name: "FIRST_ADMIN_FIRSTNAME"
+passbolt_admin_last_name: "FIRST_ADMIN_LASTNAME"

@@ -1,0 +1,29 @@
+<?php
+
+return [
+    'App' => [
+        'fullBaseUrl' => 'https://{{ passbolt_url }}',
+    ],
+    'Datasources' => [
+        'default' => [
+            'driver' => 'Cake\\Database\\Driver\\Mysql',
+            'host' => '127.0.0.1',
+            'port' => '3306',
+            'username' => '{{ db_username }}',
+            'password' => '{{ db_password }}',
+            'database' => '{{ db_name }}',
+        ],
+    ],
+    'passbolt' => [
+        'gpg' => [
+            'serverKey' => [
+                'fingerprint' => '{{ gpg_fingerprint }}',
+                'public' => CONFIG . DS . 'gpg' . DS . 'serverkey.asc',
+                'private' => CONFIG . DS . 'gpg' . DS . 'serverkey_private.asc',
+            ],
+        ],
+        'ssl' => [
+            'force' => true,
+        ],
+    ],
+];

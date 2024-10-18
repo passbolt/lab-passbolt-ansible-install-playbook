@@ -51,3 +51,4 @@
     state: present
     login_user: "{{ db_root_user }}"
     login_password: "{{ db_root_password }}"
+
