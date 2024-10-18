@@ -10,11 +10,12 @@ db_root_password: "YOUR_DATABASE_ROOT_PASSWORD"
 # Passbolt configuration
 passbolt_url: "YOUR_PASSBOLT_FULL_BASE_URL"
 passbolt_edition: "PASSBOLT_EDITION"  # Options: ce || pro
+# If you are running the PRO edition, please uncomment subscription_key_content and use the provided base64 encoded subscription key
+#subscription_key_content: "BASE64_ENCODED_SUBSCRIPTION_KEY"
 passbolt_repositories:
   ce: "https://download.passbolt.com/ce/installer/passbolt-repo-setup.ce.sh"
   pro: "https://download.passbolt.com/pro/installer/passbolt-repo-setup.pro.sh"
-# If you are running the PRO edition, please uncomment and use the provided base64 encoded subscription key
-#subscription_key_content: "BASE64_ENCODED_SUBSCRIPTION_KEY"
+
 
 # Web server
 webserver_user: "YOUR_WEBSERVER_USER"

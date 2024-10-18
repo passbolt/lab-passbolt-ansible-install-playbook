@@ -1,8 +1,7 @@
 
-- name: Generate GPG key for Passbolt (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Generate GPG key for Passbolt
   shell: |
-    su -s /bin/bash -c 'GNUPGHOME=/var/lib/passbolt/.gnupg gpg --batch --no-tty --gen-key <<EOF
+    sudo su -s /bin/bash -c 'GNUPGHOME=/var/lib/passbolt/.gnupg gpg --batch --no-tty --gen-key <<EOF
       Key-Type: default
       Key-Length: 3072
       Subkey-Type: default
@@ -12,24 +11,7 @@
       Expire-Date: 0
       %no-protection
       %commit
-    EOF' www-data
-
-- name: Generate GPG key for Passbolt (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  become_user: nginx
-  shell: |
-    GNUPGHOME=/var/lib/passbolt/.gnupg gpg --batch --no-tty --gen-key <<EOF
-      Key-Type: default
-      Key-Length: 3072
-      Subkey-Type: default
-      Subkey-Length: 3072
-      Name-Real: {{ server_gpg_name_real }}
-      Name-Email: {{ server_gpg_name_email }}
-      Expire-Date: 0
-      %no-protection
-      %commit
-    EOF
+    EOF' {{ webserver_user }}
 
 - name: Set permissions on /var/lib/passbolt/.gnupg directory
   become: true
@@ -39,89 +21,40 @@
     group: "{{ webserver_user }}"
     mode: '0700'
 
-- name: Export GPG private key (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Export GPG private key
   become: true
   shell: |
-    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export-secret-keys {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey_private.asc" www-data
+    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export-secret-keys {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey_private.asc" {{ webserver_user }}
   args:
     creates: /etc/passbolt/gpg/serverkey_private.asc
 
-- name: Export GPG public key (Debian)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Export GPG public key
   become: true
   shell: |
-    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey.asc" www-data
+    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey.asc" {{ webserver_user }}
   args:
     creates: /etc/passbolt/gpg/serverkey.asc
 
-- name: Set permissions on GPG keys (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Set permissions on GPG keys
   become: true
   file:
     path: "{{ item }}"
-    owner: www-data
-    group: www-data
+    owner: "{{ webserver_user }}"
+    group: "{{ webserver_user }}"
     mode: '0640'
   with_items:
     - /etc/passbolt/gpg/serverkey.asc
     - /etc/passbolt/gpg/serverkey_private.asc
 
-- name: Export GPG private key (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  become_user: nginx
-  shell: GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export-secret-keys {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey_private.asc
-  args:
-    creates: /etc/passbolt/gpg/serverkey_private.asc
-
-- name: Export GPG public key (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  become_user: nginx
-  shell: GNUPGHOME=/var/lib/passbolt/.gnupg gpg --armor --export {{ server_gpg_name_email }} > /etc/passbolt/gpg/serverkey.asc
-  args:
-    creates: /etc/passbolt/gpg/serverkey.asc
-
-- name: Set permissions on GPG keys (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  file:
-    path: "{{ item }}"
-    owner: nginx
-    group: nginx
-    mode: '0640'
-  with_items:
-    - /etc/passbolt/gpg/serverkey.asc
-    - /etc/passbolt/gpg/serverkey_private.asc
-
-- name: Get GPG fingerprint (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  become_user: nginx
-  shell: GNUPGHOME=/var/lib/passbolt/.gnupg gpg --fingerprint {{ server_gpg_name_email }}
-  register: gpg_fingerprint_output_rpm
-
-- name: Get GPG fingerprint (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Get GPG fingerprint
   become: true
   shell: |
-    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --fingerprint {{ server_gpg_name_email }}" www-data
-  register: gpg_fingerprint_output_debian
+    sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg gpg --fingerprint {{ server_gpg_name_email }}" {{ webserver_user }}
+  register: gpg_fingerprint_extracted
 
-- name: Extract GPG fingerprint (RPM)
-  when: ansible_facts['os_family'] == "RedHat" and gpg_fingerprint_output_rpm is defined
+- name: Extract GPG fingerprint
   set_fact:
-    gpg_fingerprint: "{{ gpg_fingerprint_output_rpm.stdout_lines[1].replace(' ', '').replace('  ', '') }}"
-
-- name: Extract GPG fingerprint (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian" and gpg_fingerprint_output_debian is defined
-  set_fact:
-    gpg_fingerprint: "{{ gpg_fingerprint_output_debian.stdout_lines[1].replace(' ', '').replace('  ', '') }}"
-
-- name: Debug GPG fingerprint
-  debug:
-    var: gpg_fingerprint
+    gpg_fingerprint: "{{ gpg_fingerprint_extracted.stdout_lines[1].replace(' ', '').replace('  ', '') }}"
 
 - name: Create Passbolt configuration file
   template:
@@ -149,20 +82,8 @@
     group: "{{ webserver_user }}"
     mode: '0640'
 
-- name: Run Passbolt installation with admin account (RPM)
-  when: ansible_facts['os_family'] == "RedHat"
-  become: true
-  become_user: "{{ webserver_user }}"
-  shell: |
-    GNUPGHOME=/var/lib/passbolt/.gnupg /usr/share/php/passbolt/bin/cake passbolt install \
-    --admin-first-name "{{ passbolt_admin_first_name }}" \
-    --admin-last-name "{{ passbolt_admin_last_name }}" \
-    --admin-username "{{ passbolt_admin_email }}" \
-    --force
-  register: install_output
 
-- name: Run Passbolt installation with admin account (Debian/Ubuntu)
-  when: ansible_facts['os_family'] == "Debian"
+- name: Run Passbolt installation with admin account
   become: true
   shell: |
     sudo su -s /bin/bash -c "GNUPGHOME=/var/lib/passbolt/.gnupg /usr/share/php/passbolt/bin/cake passbolt install \
@@ -174,15 +95,5 @@
 
 - name: Extract registration URL from Passbolt install output
   set_fact:
-    registration_url: "{{ install_output.stdout | select('search', '^https?://') | list | first }}"
+    registration_url: "{{ install_output.stdout | regex_search('https://[a-zA-Z0-9./_-]+') }}"
   ignore_errors: yes
-
-
-- name: Debug registration URL
-  debug:
-    msg: "Passbolt installation successful! Registration URL: {{ registration_url }}"
-  when: registration_url is defined
-
-- name: Debug install output
-  debug:
-    var: install_output
