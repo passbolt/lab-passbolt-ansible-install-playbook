@@ -19,7 +19,7 @@ passbolt_repositories:
 
 
 # Web server
-webserver_user: "YOUR_WEBSERVER_USER"
+webserver_user: "YOUR_WEBSERVER_USER" # Debian/Ubuntu = www-data / RPM = nginx
 
 # PHP
 php_version: "YOUR_PHP_VERSION" # Debian12 = 8.2 / Ubuntu 24.04 = 8.3 / Debian 11 = 7.4 / AlmaLinux 9 = 8.1
